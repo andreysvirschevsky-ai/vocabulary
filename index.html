@@ -53,6 +53,11 @@ button.small{font-size:13px;padding:5px 12px}
 .anchor{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--soft);color:var(--ink);font-size:15px}
 .anchor b{display:block;font-size:13px;color:var(--muted);font-weight:normal;margin-bottom:4px}
 .anchor div+div{margin-top:4px}
+.gender{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.gender .fb{margin-top:8px}
+button.g-ok{background:var(--good);color:#fff}
+button.g-bad{background:var(--bad);color:#fff}
+button.g-ok:disabled,button.g-bad:disabled{opacity:1}
 .rules{font-size:14px;color:var(--muted);margin:10px 0 0;padding-left:18px}
 </style>
 </head>
@@ -76,6 +81,7 @@ button.small{font-size:13px;padding:5px 12px}
         <li>угадал после определения: +1</li>
         <li>слово узнал, но ошибся в написании: минус по числу ошибок (не больше 3), и сразу показываем верное написание</li>
         <li>не то слово или «Не знаю»: −1 и показываем определение; если и после него не угадал — −1 и правильный ответ</li>
+        <li>потом угадай род слова: +1 (за ошибку штрафа нет)</li>
       </ul>
     </div>
     <div class="card"><h2>Табло рекордов</h2><div id="board1"></div></div>
@@ -93,6 +99,15 @@ button.small{font-size:13px;padding:5px 12px}
         <button id="btnHelp" class="ghost">Не знаю</button>
       </div>
       <div class="fb" id="fb"></div>
+      <div id="genderBox" class="gender hidden">
+        <div id="genderQ"></div>
+        <div id="genderBtns" class="row" style="margin-top:8px">
+          <button class="ghost" data-g="м">мужской</button>
+          <button class="ghost" data-g="ж">женский</button>
+          <button class="ghost" data-g="с">средний</button>
+        </div>
+        <div class="fb" id="genderFb"></div>
+      </div>
       <div class="row" style="margin-top:10px">
         <button id="btnNext" class="hidden">Дальше</button>
       </div>
@@ -114,8 +129,8 @@ button.small{font-size:13px;padding:5px 12px}
     <div class="card"><h2>Табло рекордов</h2><div id="board2"></div></div>
   </section>
 </main>
-<script src="config.js"></script>
-<script src="data.js"></script>
-<script src="game.js"></script>
+<script src="config.js?v=6"></script>
+<script src="data.js?v=6"></script>
+<script src="game.js?v=6"></script>
 </body>
 </html>

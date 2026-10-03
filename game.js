@@ -118,6 +118,7 @@
     $("defBox").classList.add("hidden");
     $("answerRow").classList.remove("hidden");
     $("btnNext").classList.add("hidden");
+    $("genderBox").classList.add("hidden");
     $("fb").className = "fb"; $("fb").textContent = "";
     $("inAnswer").value = ""; $("inAnswer").focus();
   }
@@ -136,8 +137,44 @@
   function finishWord(msg, cls) {
     $("fb").className = "fb " + cls; $("fb").innerHTML = msg;
     $("answerRow").classList.add("hidden");
-    state.nextAt = Date.now() + 500; $("btnNext").classList.remove("hidden"); setTimeout(function () { $("btnNext").focus(); }, 60);
     $("score").textContent = state.score;
+    askGender();
+  }
+
+  function showNext() {
+    state.nextAt = Date.now() + 500; $("btnNext").classList.remove("hidden"); setTimeout(function () { $("btnNext").focus(); }, 60);
+  }
+
+  // ---------- вопрос про род: +1 за верный, без штрафа за неверный ----------
+  var GN = { "м": "мужской", "ж": "женский", "с": "средний" };
+  function askGender() {
+    var w = cur(), box = $("genderBox"), r = w.r || [];
+    box.classList.remove("hidden");
+    $("genderFb").className = "fb"; $("genderFb").innerHTML = "";
+    if (!r.length) {
+      $("genderQ").textContent = "Род у этого слова не определяется: оно употребляется только во множественном числе.";
+      $("genderBtns").classList.add("hidden");
+      showNext(); return;
+    }
+    $("genderQ").textContent = "Какого рода это слово?";
+    $("genderBtns").classList.remove("hidden");
+    state.genderAt = Date.now() + 400;
+    Array.prototype.forEach.call($("genderBtns").children, function (b) { b.disabled = false; b.className = "ghost"; });
+  }
+  function pickGender(g, btn) {
+    if (Date.now() < (state.genderAt || 0) || btn.disabled) return;
+    var w = cur(), r = w.r, ok = r.indexOf(g) >= 0;
+    Array.prototype.forEach.call($("genderBtns").children, function (b) {
+      b.disabled = true;
+      if (r.indexOf(b.getAttribute("data-g")) >= 0) b.className = "g-ok";
+    });
+    if (!ok) btn.className = "g-bad";
+    var names = r.map(function (x) { return GN[x]; }), both = r.length > 1;
+    var txt = ok ? "Верно! <b>+1</b>" : "Нет, без штрафа. Правильно: " + (both ? "общий род (мужской и женский)" : names[0]);
+    if (both) txt += "<br><small>По грамоте.ру это слово общего рода — подходят и мужской, и женский.</small>";
+    if (ok) { state.score += 1; $("score").textContent = state.score; }
+    $("genderFb").className = "fb " + (ok ? "good" : "bad"); $("genderFb").innerHTML = txt;
+    showNext();
   }
 
   function anchorsHtml(w) {
@@ -222,6 +259,7 @@
   $("btnHelp").onclick = help;
   $("inAnswer").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); check(); } });
   $("btnNext").onclick = next;
+  Array.prototype.forEach.call($("genderBtns").children, function (b) { b.onclick = function () { pickGender(b.getAttribute("data-g"), b); }; });
   $("btnStop").onclick = function () { if (window.confirm("Закончить игру? Результат запишется в табло.")) endRound(true); };
   $("btnAgain").onclick = newRound;
   $("btnLogout").onclick = function () { state.name = state.pin = ""; $("inPin").value = ""; show("scrLogin"); renderBoard("board1"); };
