@@ -49,6 +49,7 @@ tr.me td{background:var(--soft);font-weight:bold}
 .big{font-size:40px;font-weight:bold;margin:4px 0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{background:var(--soft);border-radius:999px;padding:4px 10px;font-size:14px}
+button.small{font-size:13px;padding:5px 12px}
 .rules{font-size:14px;color:var(--muted);margin:10px 0 0;padding-left:18px}
 </style>
 </head>
@@ -80,7 +81,7 @@ tr.me td{background:var(--soft);font-weight:bold}
   <!-- Игра -->
   <section id="scrGame" class="hidden">
     <div class="card">
-      <div class="top"><span id="progress"></span><span>Очки: <span class="score" id="score">0</span></span></div>
+      <div class="top"><span id="progress"></span><span>Очки: <span class="score" id="score">0</span></span><button id="btnStop" class="ghost small">Стоп</button></div>
       <img class="pic" id="pic" alt="Картинка-загадка">
       <div class="def hidden" id="defBox"><span id="defText"></span><small id="defSrc"></small></div>
       <div id="answerRow" class="row" style="margin-top:14px">
@@ -91,7 +92,6 @@ tr.me td{background:var(--soft);font-weight:bold}
       <div class="fb" id="fb"></div>
       <div class="row" style="margin-top:10px">
         <button id="btnNext" class="hidden">Дальше</button>
-        <button id="btnStop" class="ghost">Стоп</button>
       </div>
     </div>
   </section>

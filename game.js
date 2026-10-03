@@ -136,7 +136,7 @@
   function finishWord(msg, cls) {
     $("fb").className = "fb " + cls; $("fb").innerHTML = msg;
     $("answerRow").classList.add("hidden");
-    $("btnNext").classList.remove("hidden"); setTimeout(function () { $("btnNext").focus(); }, 60);
+    state.nextAt = Date.now() + 500; $("btnNext").classList.remove("hidden"); setTimeout(function () { $("btnNext").focus(); }, 60);
     $("score").textContent = state.score;
   }
 
@@ -187,6 +187,7 @@
   }
 
   function next() {
+    if (Date.now() < (state.nextAt || 0)) return; // защита от случайного двойного нажатия
     state.pos++;
     if (state.pos >= state.queue.length) endRound(false); else ask();
   }
@@ -216,7 +217,7 @@
   $("btnHelp").onclick = help;
   $("inAnswer").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); check(); } });
   $("btnNext").onclick = next;
-  $("btnStop").onclick = function () { endRound(true); };
+  $("btnStop").onclick = function () { if (window.confirm("Закончить игру? Результат запишется в табло.")) endRound(true); };
   $("btnAgain").onclick = newRound;
   $("btnLogout").onclick = function () { state.name = state.pin = ""; $("inPin").value = ""; show("scrLogin"); renderBoard("board1"); };
   document.addEventListener("keydown", function (e) {
