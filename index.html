@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Словарные слова</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<style>
+:root{
+  --bg:#f6f4ef;--card:#ffffff;--ink:#1f2328;--muted:#5f6670;--line:#e2ded6;
+  --accent:#2f6fde;--accent-ink:#fff;--good:#1a7f45;--bad:#c4312b;--soft:#eef3fd;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#16181c;--card:#1f2228;--ink:#e8eaed;--muted:#a3a9b2;--line:#33373e;
+  --accent:#6b9cf5;--accent-ink:#0d1117;--good:#4fc27f;--bad:#f07067;--soft:#232b3a;}
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Verdana,Geneva,sans-serif;font-size:16px;line-height:1.45}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:4px 0 4px}
+h2{font-size:18px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:14px;color:var(--muted);margin:10px 0 4px}
+input{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+button{font:inherit;font-size:16px;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row > input{flex:1 1 200px}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.hidden{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;font-size:14px;color:var(--muted)}
+.score{font-size:18px;color:var(--ink);font-weight:bold}
+.pic{width:100%;aspect-ratio:4/3;object-fit:contain;background:var(--bg);border-radius:10px;display:block}
+.def{background:var(--soft);border-radius:10px;padding:12px 14px;margin:12px 0 0}
+.def small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.fb{margin-top:12px;font-size:16px;min-height:24px}
+.fb.good{color:var(--good)} .fb.bad{color:var(--bad)}
+.answer{font-size:22px;font-weight:bold;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:normal;font-size:13px}
+th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.me td{background:var(--soft);font-weight:bold}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.big{font-size:40px;font-weight:bold;margin:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--soft);border-radius:999px;padding:4px 10px;font-size:14px}
+.rules{font-size:14px;color:var(--muted);margin:10px 0 0;padding-left:18px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Словарные слова</h1>
+  <p class="sub">Угадай слово по картинке и напиши его правильно</p>
+
+  <!-- Вход -->
+  <section id="scrLogin">
+    <div class="card">
+      <h2>Кто играет?</h2>
+      <label for="inName">Имя</label>
+      <input id="inName" maxlength="30" autocomplete="nickname">
+      <label for="inPin">PIN-код (4 цифры) — придумай при первом входе и запомни</label>
+      <input id="inPin" inputmode="numeric" maxlength="4" autocomplete="off" type="password">
+      <div class="err" id="loginErr"></div>
+      <button id="btnStart">Начать игру</button>
+      <ul class="rules">
+        <li>угадал по картинке: +2</li>
+        <li>угадал после определения: +1</li>
+        <li>ошибка: минус столько, сколько букв неверно (не больше 3)</li>
+        <li>«?» — подсказка, без штрафа</li>
+      </ul>
+    </div>
+    <div class="card"><h2>Табло рекордов</h2><div id="board1"></div></div>
+  </section>
+
+  <!-- Игра -->
+  <section id="scrGame" class="hidden">
+    <div class="card">
+      <div class="top"><span id="progress"></span><span>Очки: <span class="score" id="score">0</span></span></div>
+      <img class="pic" id="pic" alt="Картинка-загадка">
+      <div class="def hidden" id="defBox"><span id="defText"></span><small id="defSrc"></small></div>
+      <div id="answerRow" class="row" style="margin-top:14px">
+        <input id="inAnswer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Напиши слово">
+        <button id="btnCheck">Проверить</button>
+        <button id="btnHelp" class="ghost" title="Не понимаю, что за слово">?</button>
+      </div>
+      <div class="fb" id="fb"></div>
+      <div class="row" style="margin-top:10px">
+        <button id="btnNext" class="hidden">Дальше</button>
+        <button id="btnStop" class="ghost">Стоп</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Итог -->
+  <section id="scrEnd" class="hidden">
+    <div class="card">
+      <h2 id="endTitle">Партия окончена</h2>
+      <div class="big" id="endScore"></div>
+      <div id="endBest" class="sub" style="margin:0"></div>
+      <div id="repeatBox" style="margin-top:14px"></div>
+      <div class="row" style="margin-top:16px">
+        <button id="btnAgain">Играть ещё</button>
+        <button id="btnLogout" class="ghost">Сменить игрока</button>
+      </div>
+    </div>
+    <div class="card"><h2>Табло рекордов</h2><div id="board2"></div></div>
+  </section>
+</main>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
