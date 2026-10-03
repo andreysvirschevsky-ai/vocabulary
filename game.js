@@ -140,9 +140,14 @@
     $("score").textContent = state.score;
   }
 
+  function anchorsHtml(w) {
+    if (!w.a || !w.a.length) return "";
+    return '<div class="anchor"><b>Запомни:</b>' + w.a.map(function (t) { return "<div>" + esc(t) + "</div>"; }).join("") + "</div>";
+  }
+
   function reveal(prefix) {
     var w = cur(); addRepeat(w); state.stage = "done";
-    finishWord(prefix + 'Правильно пишется: <span class="answer">' + esc(w.w) + "</span>", "bad");
+    finishWord(prefix + 'Правильно пишется: <span class="answer">' + esc(w.w) + "</span>" + anchorsHtml(w), "bad");
   }
 
   function check() {
@@ -153,7 +158,7 @@
       var pts = state.stage === "image" ? 2 : 1;
       state.score += pts; state.stage = "done";
       if (pts === 1) addRepeat(w);
-      finishWord("Верно! <b>+" + pts + "</b> — " + '<span class="answer">' + esc(w.w) + "</span>", "good");
+      finishWord("Верно! <b>+" + pts + "</b> — " + '<span class="answer">' + esc(w.w) + "</span>" + (pts === 1 ? anchorsHtml(w) : ""), "good");
       return;
     }
     var target = norm(w.w), d = lev(a, target);
