@@ -70,8 +70,8 @@ tr.me td{background:var(--soft);font-weight:bold}
       <ul class="rules">
         <li>угадал по картинке: +2</li>
         <li>угадал после определения: +1</li>
-        <li>ошибка: минус столько, сколько букв неверно (не больше 3)</li>
-        <li>«?» — подсказка, без штрафа</li>
+        <li>слово узнал, но ошибся в написании: минус по числу ошибок (не больше 3), и сразу показываем верное написание</li>
+        <li>не то слово или «Не знаю»: −1 и показываем определение; если и после него не угадал — −1 и правильный ответ</li>
       </ul>
     </div>
     <div class="card"><h2>Табло рекордов</h2><div id="board1"></div></div>
@@ -86,7 +86,7 @@ tr.me td{background:var(--soft);font-weight:bold}
       <div id="answerRow" class="row" style="margin-top:14px">
         <input id="inAnswer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Напиши слово">
         <button id="btnCheck">Проверить</button>
-        <button id="btnHelp" class="ghost" title="Не понимаю, что за слово">?</button>
+        <button id="btnHelp" class="ghost">Не знаю</button>
       </div>
       <div class="fb" id="fb"></div>
       <div class="row" style="margin-top:10px">
