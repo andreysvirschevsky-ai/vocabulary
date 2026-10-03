@@ -156,21 +156,34 @@
       finishWord("Верно! <b>+" + pts + "</b> — " + '<span class="answer">' + esc(w.w) + "</span>", "good");
       return;
     }
-    var errs = Math.max(1, Math.min(MAX_PENALTY, lev(a, norm(w.w))));
-    state.score -= errs; $("score").textContent = state.score;
+    var target = norm(w.w), d = lev(a, target);
+    var isOther = WORDS.some(function (x) { return norm(x.w) === a; });
+    var tol = target.length <= 4 ? 1 : target.length <= 8 ? 2 : 3;
+    if (!isOther && d <= tol) {
+      // слово узнал, но написал с ошибками: штраф по числу ошибок, сразу верное написание
+      var errs = Math.min(MAX_PENALTY, d);
+      state.score -= errs;
+      reveal("Слово угадано, но с " + (errs === 1 ? "ошибкой" : "ошибками") + ": <b>−" + errs + "</b>. ");
+      return;
+    }
+    wrong("Неверно, <b>−1</b>. ");
+  }
+
+  // неверное слово или «Не знаю»: −1; после картинки — определение, после определения — ответ
+  function wrong(txt) {
+    var w = cur();
+    state.score -= 1; $("score").textContent = state.score;
     addRepeat(w);
-    var txt = "Неверно, <b>−" + errs + "</b> (" + errs + " " + plural(errs, "ошибка", "ошибки", "ошибок") + "). ";
     if (state.stage === "image") {
       showDef();
-      $("fb").className = "fb bad"; $("fb").innerHTML = txt + "Вот подсказка — попробуй ещё раз.";
+      $("fb").className = "fb bad"; $("fb").innerHTML = txt + "Вот определение — попробуй ещё раз.";
     } else {
       reveal(txt);
     }
   }
 
   function help() {
-    if (state.stage === "image") { showDef(); $("fb").className = "fb"; $("fb").textContent = ""; }
-    else if (state.stage === "def") { reveal(""); }
+    if (state.stage === "image" || state.stage === "def") wrong("Не знаю: <b>−1</b>. ");
   }
 
   function next() {
